@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <!-- see http://www.html5rocks.com/en/mobile/touch.html
+    prevents native zooming -->
+  <meta name="viewport" content="width=device-width user-scalable=no
+  initial-scale=1.0,maximum-scale=1.0"/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- ie9+ rendering support for latest standards -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>jquery.tscroll plugin test</title>
+<style>
+
+  /** The body settings minimize Mac OSX / iOS
+   *  elastic scrolling (grumble, grumble).
+   *  See http://www.smilingsouls.net/Blog/20110804114957.html.
+   *  More accommodations have been made for iOS in the JavaScript.
+  */
+  body {
+    position         : absolute;
+    top              : 0;
+    left             : 0;
+    right            : 0;
+    bottom           : 0;
+    background-color : #888;
+    color            : #fff;
+    overflow-x       : hidden;
+    overflow-y       : hidden;
+    overflow         : hidden;
+    font             : normal 14px Arial, Helvetica, sans-serif;
+  }
+
+  /** BEGIN block text selects except inside inputs and paragraphs
+    See http://stackoverflow.com/questions/826782/\
+      css-rule-to-disable-text-selection-highlighting
+    Notice IE as needs onselectstart = function(){ return false; }
+  */
+
+  input, textarea, .sl-x-user-select {
+    -webkit-user-select: text;
+    -khtml-user-select : text;
+    -moz-user-select   : text;
+    -o-user-select     : text;
+    user-select        : text;
+  }
+
+  * {
+    -webkit-user-select : none;
+    -khtml-user-select  : none;
+    -moz-user-select    : -moz-none;
+    -o-user-select      : none;
+    user-select         : none;
+    box-sizing          : border-box;
+  }
+  /** END block text selects */
+
+  /** BEGIN block dragging */
+  * {
+    -webkit-user-drag : none;
+    -moz-user-drag    : none;
+    user-drag         : none;
+    /** turn off tap highlights on iOS */
+    -webkit-tap-highlight-color : transparent;
+    -webkit-touch-callout : none;
+  }
+  /** END block dragging */
+
+  /** BEGIN divs for tscroll contents */
+  #outer {
+    position : absolute;
+    top      : 2em;
+    left     : 2em;
+    right    : 2em;
+    bottom   : 2em;
+    overflow : hidden;
+  }
+  #inner {
+    position : relative;
+  }
+  .btn {
+    position      : relative;
+    float         : left;
+    margin        : 0 1.5em 1.5em 0;
+    border-width  : .2em;
+    border-style  : solid;
+    border-color  : #cc8 #880 #880 #cc8;
+    border-radius : .3em;
+    padding       : .3em;
+    width         : 5em;
+    height        : 5em;
+    line-height   : 14px;
+    cursor        : pointer;
+    z-index       : 0;
+    background    : -webkit-linear-gradient(
+      top,
+      rgba(30,87,153,0) 0%,
+      rgba(203,209,214,0.5) 50%,
+      rgba(114,124,96,0.5) 51%,
+      rgba(90,160,53,0.8) 100%
+    );
+    background     : -moz-linear-gradient(
+      top,
+      rgba(30,87,153,0) 0%,
+      rgba(203,209,214,0.5) 50%,
+      rgba(114,124,96,0.5) 51%,
+      rgba(90,160,53,0.8) 100%
+    );
+    background     : -ms-linear-gradient(
+      top,
+      rgba(30,87,153,0) 0%,
+      rgba(203,209,214,0.49) 50%,
+      rgba(114,124,96,0.5) 51%,
+      rgba(90,160,53,0.8) 100%
+    );
+    background-color : #884;
+  }
+  .btn:nth-child(even) {
+    background-color : #a44;
+  }
+  .btn:hover {
+    border-color  : #eea #aa0 #aa0 #eea;
+  }
+</style>
+  <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"
+  ></script>
+  <!-- script src="jquery.mousewheel.js"></script -->
+  <script src="jquery.tscroll.js"></script>
+
+  <script>
+    var runTest = function () {
+      $( '#outer' ).tscroll( '#inner', { side : 'left' } );
+    };
+
+    $(document).ready( runTest );
+  </script>
+</head>
+<body>
+  <div id="outer">
+    <div id="inner">
+      <div class="btn">tap</div>
+      <div class="btn">held</div>
+      <div class="btn">drag</div>
+      <div class="btn">helddrag</div>
+      <div class="btn">tap<br/>+held</div>
+      <div class="btn">tap<br/>+held<br/>+drag</div>
+      <div class="btn">tap<br/>+held<br/>+helddrag</div>
+      <div class="btn">tap<br/>+held<br/>+drag</div>
+      <div class="btn">tap<br/>+held<br/>+dragstart</div>
+      <div class="btn">tap<br/>+held<br/>+dragmove</div>
+      <div class="btn">tap<br/>+held<br/>+dragend</div>
+      <div class="btn">tap<br/>+held<br/>+heldstart</div>
+      <div class="btn">tap<br/>+held<br/>+heldmove</div>
+      <div class="btn">tap<br/>+held<br/>+heldend</div>
+      <div class="btn">held<br/>+helddrag</div>
+      <div class="btn">held<br/>+heldstart</div>
+      <div class="btn">held<br/>+heldmove</div>
+      <div class="btn">held<br/>+heldend</div>
+    </div>
+  </div>
+</body>
+</html>
+
