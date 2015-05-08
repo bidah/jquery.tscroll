@@ -11,18 +11,11 @@
  * ==============
  * Overview
  * --------
- * This jQuery plugin replaces a standard vertical scrollbar with a
- * custom one. The primary benefit is this does not get confused with touch
- * devices and scrollwheels.
- * 
- * Other benefits include:
- * 
- * 1.  Flexible styling
- * 2.  Place scrollbar on left or right side, which is useful to create
- *     seamless graphical layouts
- * 3.  Custom scrollbars will not "capture" the pointer as it passes over
- *     it - this can be very handy when we need a scrollable input field
- *     inside a google-map-like environment.
+ * Tscroll provides custom replacements for stock vertical scrollbars.
+ * Improvements include flexible styling, consistent cross-platform look,
+ * left-hand or right-hand placement, and better compatibility with map
+ * interfaces because the pointer will not be captured by a scroll area 
+ * passing beneath it.
  * 
  * Tscroll is used in commercial SPAs and uses techniques featured in
  * the book [Single page web applications - JavaScript
@@ -107,6 +100,7 @@
  *   (mike[dot]mikowski[at]gmail[dotcom])
  * Dual licensed under the MIT or GPL Version 2 http://jquery.org/license
  * Version 0.9.0 - First public release through npm
+ * Version 0.9.1 - Updated description
  *
 */
 
