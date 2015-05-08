@@ -7,64 +7,109 @@
 /*global jQuery */
 
 /*
- * jQuery tscroll - A trivial scroll function.  Replaces standard
- * vertical scrollbar with a custom one.  The primary benefit is this
- * does not get confused with touch devices and scrollwheels.
- *
- * Copyright (c) 2013/2015 Michael Mikowski - mike.mikowski(at)gmail(dot)com
- * Dual licensed under MIT and GPL.
- * http://www.opensource.org/licenses/mit-license.php
- * http://www.gnu.org/licenses/gpl.html
- *
- * Date   : 2013-01-28
- * Revised: 2015-05-07
- * @author Michael S. Mikowski
- * @version 0.9.0
- *
+ * jquery.tscroll
+ * ==============
+ * Overview
+ * --------
+ * This jQuery plugin replaces a standard vertical scrollbar with a
+ * custom one. The primary benefit is this does not get confused with touch
+ * devices and scrollwheels.
+ * 
+ * Other benefits include:
+ * 
+ * 1.  Flexible styling
+ * 2.  Place scrollbar on left or right side, which is useful to create
+ *     seamless graphical layouts
+ * 3.  Custom scrollbars will not "capture" the pointer as it passes over
+ *     it - this can be very handy when we need a scrollable input field
+ *     inside a google-map-like environment.
+ * 
+ * Tscroll is used in commercial SPAs and uses techniques featured in
+ * the book [Single page web applications - JavaScript
+ * end-to-end](http://manning.com/mikowski).
+ * 
  * Use
- * $<outer_div>.tscroll( <inner_div> [, { pos_key : 'left' } ] )
- *
- * Example
- *   // Standard
- *   $<outer_div>.tscroll( '<inner_div>' );
- *
- *   // Left scroll bar
- *   $<outer_div>.tscroll( '<inner_div>', { pos_key : 'left' } );
- *
- *   // Refresh scrollbar height (useful after a window resize)
- *   $<outer_div>.tscroll();
- *
- *   '<inner_div>' may be a string selector or a jquery collection.
- *
- * Discussion
- *   The outer div should be sized and position to hold the inner div.
- *   In particular, it should have overflow hidden.  The inner div should not
- *   be constrained in height.  The inner div should also have
- *   padding-right set to some amount - say 24px - to accommodate the
- *   scrollbar if required.
- *
- *   We may have multiple tscroll areas active at once in a window.
- *   But we must initialize them one at a time since two selectors
- *   must be specified for each, and jQuery doesn't provide iteration over
- *   selector pairs as far as I know.
- *
- *   Mousewheel support is available if the jquery.mousewheel plugin is
- *   installed.
- *
- * TODO list
- *   * Add github repo; post on jQuery plugin site
- *   * Support scroll wheel if initiated when cursor is in scrollable area
- *   * Better styling
- *   * Fix pointer on scrolling (it defaults to text cursor;
- *     changing cursor:pointer on outer, content, and knob does not work
- *   * Sizing of the content only occurs on initialization.  If the
- *     content changes size there is no guarantee of good results.
- *     The solution is to reconsider height during onDragmove.
- *     This means storing content and outer height, and also
- *     moving the sizing routine from the initialize
- *     to an external routine so it can be reused.
+ * ---
+ *     $<outer_div>.tscroll( <inner_div> [, { pos_key : 'left' } ] )
+ * 
+ * Examples
+ * --------
+ *     // Standard
+ *     $<outer_div>.tscroll( '<inner_div>' );
+ * 
+ *     // Left scroll bar
+ *     $<outer_div>.tscroll( '<inner_div>', { pos_key : 'left' } );
+ * 
+ *     // Refresh scrollbar height (useful after a window resize)
+ *     $<outer_div>.tscroll();
+ * 
+ *     '<inner_div>' may be a string selector or a jquery collection.
+ * 
+ * Please see the tscroll-test.html file for a demonstration of use.
+ * 
+ * Prerequisites
+ * -------------
+ * We must use jQuery 1.7.0+. We also require the following jQuery plugins
+ * be installed and processed by the browser before this plugin is added or
+ * used:
+ * 
+ *   * The unified event plugin (jquery.event.ue)
+ *   * The mousewheel plugin (jquery-mousewheel)
+ * 
+ * jquery.tscroll works in any modern browser (IE9+ and later version of
+ * Chrome, Safari, and Firefox). IE9 may require edge settings:
+ * 
+ *     <html>
+ *     <head>
+ *       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+ *       ....
+ * 
+ * Implementation
+ * --------------
+ * You will need to create an outer div that contains an inner div. The
+ * outer div defines the "window" on the content. The inner div is the
+ * container for that content. The outer div should have these CSS
+ * attributes:
+ * 
+ *   * overflow : hidden
+ *   * padding : 0 1em 0 0 where the 1em right padding accomodates the
+ *     scrollbar width. Switch this to padding : 0 0 0 1em if you elect to
+ *     place the scroll bar on the left. There should be no other padding
+ *     or it will hose your scrollbars
+ *   * position : absolute or position : relative
+ *   * A defined size by some combination of width, height and the
+ *     top-left-right-bottom properties
+ * 
+ * The inner div should have these CSS attributes:
+ * 
+ *   * Do not constrain the height. This container needs to "grow" to
+ *     accommodate its content
+ *   * Do not forget to clear floats if you are floating elements within
+ *     this div. Otherwise, this div will have the wrong or 0 height, and
+ *     the plugin will not work correctly
+ *   * Do add padding around your content to this div.
+ * 
+ * We may have multiple tscroll areas active at once in a window that are
+ * individually activated. We should have also have a window.resize handler
+ * so the scrollbar can be recalculated whenever the window is resized for
+ * any reason. The example HTML illustrates all these concepts.
+ * 
+ * Error handling
+ * --------------
+ * 
+ * Like many jQuery plugins, this code does not throw exceptions. Instead,
+ * it does its work quietly.
+ * 
+ * Release Notes
+ * -------------
+ * 
+ * Copyright (c) 2013-2015 Michael S. Mikowski
+ *   (mike[dot]mikowski[at]gmail[dotcom])
+ * Dual licensed under the MIT or GPL Version 2 http://jquery.org/license
+ * Version 0.9.0 - First public release through npm
  *
 */
+
 (function ( $ ) {
   'use strict';
   var
@@ -88,24 +133,26 @@
 
         + '.jq-tscroll-box {'
           + 'position:absolute; top:0; bottom:0;'
-          + 'width:10px; background:#d8d8d8; z-index: 1;'
+          + 'width:1em; background:#d8d8d8; z-index: 1;'
         + '}'
 
         + '.jq-tscroll-zip {'
-          + 'position:absolute; top:0; bottom:0; right:4px;'
-          + 'width:2px; background:#aaa; z-index:2;'
+          + 'position:absolute; top:0; bottom:0; right:.429em;'
+          + 'width:.143em; background:#aaa; z-index:2;'
         + '}'
         + '.jq-tscroll-knob {'
-          + 'position:absolute; top:0; right:0; width:10px;'
+          + 'position:absolute; top:0; right:0; width:1em;'
           + 'background-color:#aaa;'
-          + 'background-image:linear-gradient(to bottom,#ddd,#999);'
-          + 'border:1px solid #888; border-radius: 2px;'
-          + 'z-index:3; cursor:pointer;'
+          + 'background-image:-webkit-linear-gradient('
+            + 'top, #888 0%, #bbb 50%,#888 100%);'
+          + 'border:0.1em solid #666; border-radius: .1em;'
+          + 'z-index:3;cursor:pointer;'
         + '}'
         + '.jq-tscroll-knob:hover, .jq-tscroll-knob.jq-tscroll-active {'
-          + 'background-color:#999;'
-          + 'background-image:linear-gradient(to bottom,#ccc,#888);'
-          + 'border-color:#888; cursor:pointer;'
+          + 'background-color:#bbb;'
+          + 'background-image:-webkit-linear-gradient('
+            + 'top, #666 0%,#ccc 50%,#666 100%);'
+          + 'border-color:#666;'
         + '}'
     },
     onDragstart, onDragmove, onDragend,
@@ -121,7 +168,7 @@
       data_map   = $( this ).data( 'tscroll' ),
       jquery_map = data_map.jquery_map;
 
-    jquery_map.$content.addClass(    'jq-tscroll-ns'     );
+    jquery_map.$inner.addClass(      'jq-tscroll-ns'     );
     jquery_map.$scrollknob.addClass( 'jq-tscroll-active' );
     return false;
   };
@@ -158,7 +205,7 @@
       data_map   = $( this ).data( 'tscroll' ),
       jquery_map = data_map.jquery_map;
 
-    jquery_map.$content.removeClass( 'jq-tscroll-ns' );
+    jquery_map.$inner.removeClass( 'jq-tscroll-ns' );
     jquery_map.$scrollknob.removeClass( 'jq-tscroll-active' );
     return false;
   };
@@ -194,13 +241,13 @@
       state_map   = data_map.state_map,
 
       $outer      = jquery_map.$outer,
-      $content    = jquery_map.$content,
+      $inner      = jquery_map.$inner,
       $scrollbox  = jquery_map.$scrollbox,
       $scrollknob = jquery_map.$scrollknob,
       top_px      = $outer.scrollTop(),
 
       outer_ht   = $outer.height(),
-      content_ht = $content.height(),
+      content_ht = $inner.height(),
 
       height_ratio  = outer_ht / content_ht,
       max_scroll_px = content_ht - outer_ht,
@@ -222,16 +269,12 @@
     state_map.max_scroll_px = max_scroll_px;
   };
 
-  initModule = function ( $outer, inner_data, option_map ) {
+  initModule = function ( $outer, $inner, option_map ) {
     var
-      inner_type = typeof inner_data,
-      $content   = inner_type === 'string'
-        ? $( inner_data ) : inner_data,
-
       $styles, $scrollbox, $scrollknob, jquery_map, state_map, data_map;
 
-    if ( $outer.length   !== 1 ) { return false;}
-    if ( $content.length !== 1 ) { return false;}
+    if ( $outer.length !== 1 ) { return false;}
+    if ( $inner.length !== 1 ) { return false;}
 
     $styles = $( 'style#jq-tscroll' );
     if ( $styles.length < 1 ){
@@ -259,7 +302,7 @@
 
     jquery_map = {
       $outer      : $outer,
-      $content    : $content,
+      $inner      : $inner,
       $scrollbox  : $scrollbox,
       $scrollknob : $scrollknob
     };
@@ -290,28 +333,27 @@
     return true;
   };
 
-  $.fn.tscroll = function ( arg_data ) {
-    var $outer, inner_data, option_map, data_map;
+  $.fn.tscroll = function ( inner_data, option_map ) {
+    var $outer, inner_type, $inner, data_map;
 
     $outer = this;
 
-    // if we have received no argument, refresh the
-    // scrollbar size
-    if ( ! arg_data ) {
+    // Initialize if we have received arguments
+    if ( inner_data ) {
+      inner_type = typeof inner_data;
+      $inner     = inner_type === 'string'
+        ? $( inner_data ) : inner_data;
+
+      initModule( $outer, $inner, option_map );
+    }
+    // Otherwise refresh the scrollbar size
+    else {
       if ( $outer.hasClass( 'jq-tscroll' ) ) {
         data_map = $outer.find( '.jq-tscroll-knob' ).data( 'tscroll' );
         if ( data_map ) { resizeScrollbar( data_map ); }
       }
     }
-    // if we have received a jquery object, for content,
-    // do the right thing and initialize
-    else if ( arg_data.jquery ) {
-      inner_data = arguments[0];
-      option_map = arguments[1] || {};
-
-      initModule( $outer, inner_data, option_map );
-    }
-    return this;
+    return $outer;
   };
 
 }( jQuery ));

@@ -23,21 +23,20 @@
     left             : 0;
     right            : 0;
     bottom           : 0;
-    background-color : #888;
-    color            : #fff;
+    color            : #666;
     overflow-x       : hidden;
     overflow-y       : hidden;
     overflow         : hidden;
-    font             : normal 14px Arial, Helvetica, sans-serif;
+    font             : normal 16px Arial, Helvetica, sans-serif;
   }
 
   /** BEGIN block text selects except inside inputs and paragraphs
     See http://stackoverflow.com/questions/826782/\
       css-rule-to-disable-text-selection-highlighting
-    Notice IE as needs onselectstart = function(){ return false; }
+    Notice IE needs onselectstart = function(){ return false; }
   */
 
-  input, textarea, .sl-x-user-select {
+  input, textarea, .user-select {
     -webkit-user-select: text;
     -khtml-user-select : text;
     -moz-user-select   : text;
@@ -45,52 +44,74 @@
     user-select        : text;
   }
 
+  /** BEGIN block text selects and dragging */
   * {
+    box-sizing          : border-box;
+
     -webkit-user-select : none;
     -khtml-user-select  : none;
     -moz-user-select    : -moz-none;
     -o-user-select      : none;
     user-select         : none;
-    box-sizing          : border-box;
-  }
-  /** END block text selects */
 
-  /** BEGIN block dragging */
-  * {
-    -webkit-user-drag : none;
-    -moz-user-drag    : none;
-    user-drag         : none;
+
+    -webkit-user-drag   : none;
+    -moz-user-drag      : none;
+    user-drag           : none;
+
     /** turn off tap highlights on iOS */
-    -webkit-tap-highlight-color : transparent;
     -webkit-touch-callout : none;
+    -webkit-tap-highlight-color : transparent;
   }
-  /** END block dragging */
+  /** END block text selects and dragging */
 
   /** BEGIN divs for tscroll contents */
-  #outer {
+  #outer1, #outer2, #outer3 {
     position : absolute;
     top      : 2em;
-    left     : 2em;
-    right    : 2em;
     bottom   : 2em;
     overflow : hidden;
+    padding  : 0;
+    border   : 0.3em solid #aaa;
+    border-radius : 0.6em;
   }
-  #inner {
+  #outer1 {
+    left         : 2em;
+    width        : 25em;
+    padding-left : 1em;
+  }
+  #outer2 {
+    left          : 29em;
+    width         : 50em;
+    padding-right : 1em;
+  }
+  #outer3 {
+    left          : 81em;
+    width         : 25em;
+    padding-right : 1em;
+  }
+  #inner1, #inner2, #inner3 {
     position : relative;
+    padding  : 1em;
   }
   .btn {
+    font-size     : 3em;
     position      : relative;
     float         : left;
-    margin        : 0 1.5em 1.5em 0;
+    margin        : 0.25em;
     border-width  : .2em;
     border-style  : solid;
     border-color  : #cc8 #880 #880 #cc8;
     border-radius : .3em;
-    padding       : .3em;
-    width         : 5em;
-    height        : 5em;
-    line-height   : 14px;
+    width         : 3em;
+    height        : 3em;
+    line-height   : 2.66em;
+    text-align    : center;
+    font-weight   : 800;
     cursor        : pointer;
+    color         : white;
+    box-shadow    : #000 0 0 0.5em -0.2em;
+
     z-index       : 0;
     background    : -webkit-linear-gradient(
       top,
@@ -115,48 +136,192 @@
     );
     background-color : #884;
   }
+
   .btn:nth-child(even) {
     background-color : #a44;
   }
   .btn:hover {
     border-color  : #eea #aa0 #aa0 #eea;
+    background-color : #888;
+  }
+
+  .clearfloat {
+    height     : 2em;
+    float      : none;
+    visibility : none;
+    clear      : both;
   }
 </style>
   <script
     src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"
   ></script>
-  <!-- script src="jquery.mousewheel.js"></script -->
+  <script src="../jquery.event.ue/jquery.event.ue.js"></script>
+  <script src="../jquery-mousewheel/jquery.mousewheel.js"></script>
   <script src="jquery.tscroll.js"></script>
 
   <script>
     var runTest = function () {
-      $( '#outer' ).tscroll( '#inner', { side : 'left' } );
+      var 
+        $outer1 = $( '#outer1' ),
+        $outer2 = $( '#outer2' ),
+        $outer3 = $( '#outer3' ),
+        $inner1 = $( '#inner1' ),
+        $inner2 = $( '#inner2' );
+        $inner3 = $( '#inner3' );
+
+      var doResize;
+      doResize = function () {
+        $outer1.tscroll();
+        $outer2.tscroll();
+        $outer3.tscroll();
+      };
+
+      $outer1.tscroll( $inner1, { pos_key : 'left'  } );
+      $outer2.tscroll( $inner2 );
+      $outer3.tscroll( $inner3, { pos_key : 'right' } );
+      $( window ).on( 'resize', doResize );
     };
 
     $(document).ready( runTest );
   </script>
 </head>
 <body>
-  <div id="outer">
-    <div id="inner">
-      <div class="btn">tap</div>
-      <div class="btn">held</div>
-      <div class="btn">drag</div>
-      <div class="btn">helddrag</div>
-      <div class="btn">tap<br/>+held</div>
-      <div class="btn">tap<br/>+held<br/>+drag</div>
-      <div class="btn">tap<br/>+held<br/>+helddrag</div>
-      <div class="btn">tap<br/>+held<br/>+drag</div>
-      <div class="btn">tap<br/>+held<br/>+dragstart</div>
-      <div class="btn">tap<br/>+held<br/>+dragmove</div>
-      <div class="btn">tap<br/>+held<br/>+dragend</div>
-      <div class="btn">tap<br/>+held<br/>+heldstart</div>
-      <div class="btn">tap<br/>+held<br/>+heldmove</div>
-      <div class="btn">tap<br/>+held<br/>+heldend</div>
-      <div class="btn">held<br/>+helddrag</div>
-      <div class="btn">held<br/>+heldstart</div>
-      <div class="btn">held<br/>+heldmove</div>
-      <div class="btn">held<br/>+heldend</div>
+  <div id="outer2">
+    <div id="inner2">
+<!-- use pandoc -f markdown -t html README.md to recreate this -->
+<h1 id="jquery.tscroll">jquery.tscroll</h1>
+<h2 id="overview">Overview</h2>
+<p>Use this jQuery plugin to replace a standard vertical scrollbar with a custom one. The primary benefit is this does not get confused with touch devices and scrollwheels.</p>
+<p>Other benefits include:</p>
+<ol style="list-style-type: decimal">
+<li>Flexible styling</li>
+<li>Place scrollbar on left or right side, which is useful to create seamless graphical layouts</li>
+<li>Custom scrollbars will not &quot;capture&quot; the pointer as it passes over it - this can be very handy when we need a scrollable input field inside a google-map-like environment.</li>
+</ol>
+<p>Tscroll is used in commercial SPAs and uses techniques featured in the book <a href="http://manning.com/mikowski">Single page web applications - JavaScript end-to-end</a>.</p>
+<h2 id="use">Use</h2>
+<pre><code>$&lt;outer_div&gt;.tscroll( &lt;inner_div&gt; [, { pos_key : &#39;left&#39; } ] )</code></pre>
+<h2 id="examples">Examples</h2>
+<pre><code>// Standard
+$&lt;outer_div&gt;.tscroll( &#39;&lt;inner_div&gt;&#39; );
+
+// Left scroll bar
+$&lt;outer_div&gt;.tscroll( &#39;&lt;inner_div&gt;&#39;, { pos_key : &#39;left&#39; } );
+
+// Refresh scrollbar height (useful after a window resize)
+$&lt;outer_div&gt;.tscroll();
+
+&#39;&lt;inner_div&gt;&#39; may be a string selector or a jquery collection.</code></pre>
+<p>Please see the <code>tscroll-test.html</code> file for a demonstration of use.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>We must use jQuery 1.7.0+. We also require the following jQuery plugins be installed and processed by the browser before this plugin is added or used:</p>
+<ul>
+<li>The unified event plugin (<code>jquery.event.ue</code>)</li>
+<li>The mousewheel plugin (<code>jquery-mousewheel</code>)</li>
+</ul>
+<p><strong>jquery.tscroll</strong> works in any modern browser (IE9+ and later version of Chrome, Safari, and Firefox). IE9 may require edge settings:</p>
+<pre><code>&lt;html&gt;
+&lt;head&gt;
+  &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot; /&gt;
+  ....</code></pre>
+<h2 id="implementation">Implementation</h2>
+<p>You will need to create an outer div that contains an inner div. The outer div defines the &quot;window&quot; on the content. The inner div is the container for that content. The outer div should have these CSS attributes:</p>
+<ul>
+<li><code>overflow : hidden</code></li>
+<li><code>padding : 0 1em 0 0</code> where the 1em right padding accomodates the scrollbar width. Switch this to <code>padding : 0 0 0 1em</code> if you elect to place the scroll bar on the left. <strong>There should be no other padding or it will hose your scrollbars</strong></li>
+<li><code>position : absolute</code> or <code>position : relative</code></li>
+<li>A defined size by some combination of <code>width</code>, <code>height</code> and the <code>top-left-right-bottom</code> properties</li>
+</ul>
+<p>The inner div should have these CSS attributes:</p>
+<ul>
+<li><strong>Do not constrain the height.</strong> This container needs to &quot;grow&quot; to accommodate its content</li>
+<li><strong>Do not forget to clear floats</strong> if you are floating elements within this div. Otherwise, this div will have the wrong or 0 height, and the plugin will not work correctly</li>
+<li><strong>Do add padding</strong> around your content to this div.</li>
+</ul>
+<p>We may have multiple <code>tscroll</code> areas active at once in a window that are individually activated. We should have also have a <code>window.resize</code> handler so the scrollbar can be recalculated whenever the window is resized for any reason. The example HTML illustrates all these concepts.</p>
+<h2 id="error-handling">Error handling</h2>
+<p>Like many jQuery plugins, this code does not throw exceptions. Instead, it does its work quietly.</p>
+<h2 id="replace-backbone">Avoid complex 'SPA framework' libraries</h2>
+<p>This plugin is part of a set of lean, easy-to-use tools to implement the SPA architecture detailed in the best-selling book, <a href="http://manning.com/mikowski">Single Page Web Applications - JavaScript end-to-end</a>. Other recommended tools include:</p>
+<ul>
+<li>AJAX: Use <strong>native jQuery</strong> AJAX methods.</li>
+<li>Promises: Use <strong>native jQuery</strong> promise methods.</li>
+<li>Model Events: Use the <strong>jQuery plugin</strong> <a href="https://www.npmjs.com/package/jquery.event.gevent">jquery.event.gevent</a> as a unified event mechanism. This eliminates having to manage multiple event types in your SPA.</li>
+<li>Routing: Use the <strong>jQuery plugin</strong> <a href="https://www.npmjs.com/package/jquery.urianchor">jquery.urianchor</a> for much more robust routing, including support to independent and dependent parameters.</li>
+<li>Touch interface: Use the <strong>jQuery plugin</strong> <a href="https://www.npmjs.com/package/jquery.event.ue">jquery.event.ue</a> to handle touch and mouse events.</li>
+<li>Data Model: Use the <strong>focused library</strong> <a href="https://github.com/typicaljoe/taffydb/">taffyDB</a> for superior and more flexible client side data management.</li>
+<li>Templating: Use <strong>focused library</strong> <a href="http://linkedin.github.io/dustjs/">Dust</a> for much more useful templates that don't tempt you to intermingle display methods with application logic.</li>
+</ul>
+<p>This suite of tools has all the capabilities of modern framework libraries but, when used correctly, can vastly improve flexibility and testability. It takes advantage jQuery's excellent built-in tools instead of competing with them.</p>
+<h2 id="release-notes">Release Notes</h2>
+<h3 id="copyright-c">Copyright (c)</h3>
+<p>2013-2015 Michael S. Mikowski (mike[dot]mikowski[at]gmail[dotcom])</p>
+<h3 id="license">License</h3>
+<p>Dual licensed under the MIT or GPL Version 2 http://jquery.org/license</p>
+<h3 id="version-0.9.0">Version 0.9.0</h3>
+<p>First public release through npm</p>
+<h2 id="see-also">See also</h2>
+<p>You don't have to do this you know. Native scroll bars work fine in many instances.</p>
+<h2 id="todo">TODO</h2>
+<ul>
+<li>Enable common styling options</li>
+</ul>
+<h2 id="contribute">Contribute!</h2>
+<p>If you want to help out, like all jQuery plugins this is hosted at GitHub. Any improvements or suggestions are welcome! You can reach me at mike[dot]mikowski[at]gmail[dotcom].</p>
+<p>Cheers, Mike</p>
+<h2 id="end">END</h2>
+    </div>
+  </div>
+
+  <div id="outer1">
+    <div id="inner1">
+      <div class="btn">1</div>
+      <div class="btn">2</div>
+      <div class="btn">3</div>
+      <div class="btn">4</div>
+      <div class="btn">5</div>
+      <div class="btn">6</div>
+      <div class="btn">7</div>
+      <div class="btn">8</div>
+      <div class="btn">9</div>
+      <div class="btn">10</div>
+      <div class="btn">11</div>
+      <div class="btn">12</div>
+      <div class="btn">13</div>
+      <div class="btn">14</div>
+      <div class="btn">15</div>
+      <div class="btn">16</div>
+      <div class="btn">17</div>
+      <div class="btn">18</div>
+      <div class="btn">19</div>
+      <div class="btn">20</div>
+      <div class="clearfloat"></div>
+    </div>
+  </div>
+
+  <div id="outer3">
+    <div id="inner3">
+      <div class="btn">1</div>
+      <div class="btn">2</div>
+      <div class="btn">3</div>
+      <div class="btn">4</div>
+      <div class="btn">5</div>
+      <div class="btn">6</div>
+      <div class="btn">7</div>
+      <div class="btn">8</div>
+      <div class="btn">9</div>
+      <div class="btn">10</div>
+      <div class="btn">11</div>
+      <div class="btn">12</div>
+      <div class="btn">13</div>
+      <div class="btn">14</div>
+      <div class="btn">15</div>
+      <div class="btn">16</div>
+      <div class="btn">17</div>
+      <div class="btn">18</div>
+      <div class="btn">19</div>
+      <div class="btn">20</div>
+      <div class="clearfloat"></div>
     </div>
   </div>
 </body>
