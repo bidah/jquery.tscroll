@@ -1,6 +1,6 @@
 {
   "name": "jquery.tscroll.js",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description":"Tscroll provides custom replacements for stock vertical scrollbars.  Improvements include flexible styling, consistent cross-platform look, left-hand or right-hand placement, and better compatibility with map interfaces because the pointer will not be captured by a scroll area passing beneath it.",
   "keywords": [
     "scroll","scrollbar","custom"
