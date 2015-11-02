@@ -146,6 +146,10 @@ Updated description
 
 Updated documentation
 
+### Version 0.9.3
+
+Added dependencies
+
 See also
 --------
 
