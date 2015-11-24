@@ -150,6 +150,10 @@ Updated documentation
 
 Added dependencies
 
+### Version 0.9.4
+
+Added keywords
+
 See also
 --------
 

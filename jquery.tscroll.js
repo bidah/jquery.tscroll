@@ -99,8 +99,12 @@
  * Copyright (c) 2013-2015 Michael S. Mikowski
  *   (mike[dot]mikowski[at]gmail[dotcom])
  * Dual licensed under the MIT or GPL Version 2 http://jquery.org/license
- * Version 0.9.0 - First public release through npm
- * Version 0.9.1 - Updated description
+ *
+ *   0.9.0 - First public release through npm
+ *   0.9.1 - Updated description
+ *   0.9.2 - Updated documentation
+ *   0.9.3 - Added dependencies
+ *   0.9.4 - Added keywords
  *
 */
 
